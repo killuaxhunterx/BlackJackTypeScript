@@ -1,12 +1,19 @@
 import type { DeckEntity } from "../model/DeckEntity.js";
 import { Cards } from "../model/CardsEnum.js";
+import type { PlayerEntity } from "../model/PlayerEntity.js";
+import type { DealerEntity } from "../model/DealerEntity.js";
+
 
 export class DeckService {    
 
     private deckEntity: DeckEntity;
+    private playerEntity: PlayerEntity;
+    private dealerEntity: DealerEntity;
 
-    constructor(deckEntity: DeckEntity) {
+    constructor(deckEntity: DeckEntity, playerEntity: PlayerEntity, dealerEntity: DealerEntity) {
         this.deckEntity = deckEntity;
+        this.playerEntity = playerEntity;
+        this.dealerEntity = dealerEntity;
         this.generateAllCards();
     }
 
@@ -18,12 +25,12 @@ export class DeckService {
         return this.getAllCards().filter(c => c === card);
     }
 
-    getPlayersDeck(): Cards[] {
-        return this.deckEntity.getplayersDeck();
+    getPlayersHand(): Cards[] {
+        return this.playerEntity.getplayersHand();
     }
 
-    getDealersDeck(): Cards[] {
-        return this.deckEntity.getDealersDeck();
+    getDealersHand(): Cards[] {
+        return this.dealerEntity.getDealersHand();
     }
 
     shuffleArrayCards(array: Cards[]) {
@@ -38,15 +45,15 @@ export class DeckService {
         this.deckEntity.getCards().push(card);
     }
 
-    addCardsToPlayersDeck(card: Cards): void {
-        this.deckEntity.getplayersDeck().push(card);
+    addCardsToPlayersHand(card: Cards): void {
+        this.playerEntity.getplayersHand().push(card);
     }
 
-    addCardsToDealersDeck(card: Cards): void {
-        this.deckEntity.getDealersDeck().push(card);
+    addCardsToDealersHand(card: Cards): void {
+        this.dealerEntity.getDealersHand().push(card);
     }
 
-    generateAces(): void {
+    generateAcesCards(): void {
         for (let i = 0; i < 4; i++) {
             let acesCards: Cards = Cards.A;
             this.addCardsToDeck(acesCards);
@@ -92,24 +99,34 @@ export class DeckService {
             }
         }
     }
-
-    generateAllCards(): void {
-        this.generateAces();
-        this.generateNumericalCards();
-        this.generateFaceCards();
-        this.generateInitialDecks();
-    }
     
-    generateInitialDecks(): void {
+    generateInitialHands(): void {
         const cardsInitialDeck: Cards[] = this.getAllCards();
         const cardsInitialDeckShuffled = this.shuffleArrayCards(cardsInitialDeck);
         for (let i = 0; i < 4; i++) {
             if (i < 2) {
-                this.addCardsToPlayersDeck(cardsInitialDeckShuffled[i]);
+                this.addCardsToPlayersHand(cardsInitialDeckShuffled[i]);
             } else {
-                this.addCardsToDealersDeck(cardsInitialDeckShuffled[i]);
+                this.addCardsToDealersHand(cardsInitialDeckShuffled[i]);
             }
         }
     }
 
+    conditionToScoreOnAceCard(): void {
+        for (let i= 0; i < this.getPlayersHand().length; i++) {
+            if (this.getPlayersHand()[1] === Cards.A && this.getPlayersHand()[0] > 1) {
+                const newScoreAce: Cards = Cards.AA;
+                this.playerEntity.setplayersHand([this.getPlayersHand()[0], newScoreAce]);
+                this.dealerEntity.setDealersHand([this.getDealersHand()[0], newScoreAce]);
+            }
+        }
+    }
+
+    generateAllCards(): void {
+        this.generateAcesCards();
+        this.generateNumericalCards();
+        this.generateFaceCards();
+        this.generateInitialHands();
+        this.conditionToScoreOnAceCard();
+    }
 }
