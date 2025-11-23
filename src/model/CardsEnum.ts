@@ -11,6 +11,7 @@ export enum Cards {
     J = 10,
     K = 10,
     Q = 10,
-    A = 1
+    A = 1,
+    AA = 11
 }
 
