@@ -5,6 +5,7 @@ export class PlayerEntity {
     private bet: number = 0;
     private funds: number = 0;
     private playersHand: Cards[] = [];
+    private scoreHand: number = 0;
     
     getBet(): number {
         return this.bet;
@@ -14,15 +15,27 @@ export class PlayerEntity {
         this.bet = bet;
     }
 
+    setFunds(funds: number): void {
+        this.funds = funds;
+    }
+
     getFunds(): number {
         return this.funds;
     }
 
-    getplayersHand(): Cards[] {
+    getPlayersHand(): Cards[] {
         return this.playersHand;
     }
 
-    setplayersHand(playersHand: Cards[]): void {
+    setPlayersHand(playersHand: Cards[]): void {
         this.playersHand = playersHand;
+    }
+    
+    getScoreHand(): number {
+        return this.scoreHand;
+    }
+
+    setScoreHand(score: number): void {
+        this.scoreHand = score;
     }
 }
